@@ -26,7 +26,7 @@ Otherwise, you can launch them using the `run_tutorial()` function from the `lea
 #### Tutorial 4 - Data Preparation: Working with dates and tidy data
 
 ``` r
-learnr::run_tutorial(name = "Section_4_Data_Preparation",
+learnr::run_tutorial(name = "section_4_data_preparation",
                      package = "ULlearnR")
 ```
 

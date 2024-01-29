@@ -1,5 +1,5 @@
 ---
-title: "Section_4_Data_Preparation"
+title: "Section 4: Data Preparation - Working with dates and tidy data"
 output:
   learnr::tutorial:
           progressive: true

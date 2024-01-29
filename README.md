@@ -1,16 +1,10 @@
 # ULlearnR
 
-<!-- badges: start -->
-```{r, fig.asp=1, out.width="200px", echo = FALSE}
-#knitr::include_graphics(path = "inst/figures/hex-badge.png")
-```
-<!-- badges: end -->
-
 The goal of ULlearnR is to publish interactive tutorials for the UL module **"Data Analytics with R"**.
 
 ## Installation
 
-You can install IDAlearnR from [GitHub](https://github.com/) with:
+You can install ULlearnR from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
@@ -25,18 +19,18 @@ Once you have installed the package, you should be able to launch the tutorials 
 
 Press "Start Tutorial" and once it has loaded in the pane, press the button to open the tutorial in an internet browser.
 
-Otherwise, you can launch them using the `run_tutorial()` function from the `learnr` package.
+Otherwise, you can launch them using the `run_tutorial()` function from the `learnr` package:
 
 ### Launching using `run_tutorial()`
 
-#### Tutorial 4 - Data Preparation: Working with dates and tody data
+#### Tutorial 4 - Data Preparation: Working with dates and tidy data
 
 ``` r
 learnr::run_tutorial(name = "Section_4_Data_Preparation",
                      package = "ULlearnR")
 ```
 
-#### For tutorials 1 to 3
+#### For Tutorials 1 to 3
 
 ``` r
 devtools::install_github("edwardgunning/IDAlearnR")

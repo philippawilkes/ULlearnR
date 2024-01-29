@@ -30,10 +30,26 @@ learnr::run_tutorial(name = "section_4_data_preparation",
                      package = "ULlearnR")
 ```
 
-#### For Tutorials 1 to 3
+---
+
+#### For Tutorials 1 to 3 see IDAlearnR package:
 
 ``` r
 devtools::install_github("edwardgunning/IDAlearnR")
 ```
 
-
+Tutorial 1 - The basics of R
+``` r
+learnr::run_tutorial(name = "section_1_basics_of_R",
+                     package = "IDAlearnR")
+```
+Tutorial 2 - Lists, loops and functions
+``` r
+learnr::run_tutorial(name = "section_2_lists_loops_functions",
+                     package = "IDAlearnR")
+```
+Tutorial 3 - “Introduction to the tidyverse”
+``` r
+learnr::run_tutorial(name = "section_3_basics_of_tidyverse",
+                     package = "IDAlearnR")
+```

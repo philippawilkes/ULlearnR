@@ -215,7 +215,7 @@ knitr::opts_chunk$set(echo = FALSE)
 invoicing <- readRDS("data/invoicing.rds")
 invoicing_ex <- invoicing[c(1:5), ] %>% mutate(across(2:4, ~dmy(.)))
 tidy_datetimes <- readRDS("data/tidy_datetimes.rds")
-untidy <- readRDS("data/untidy2.rds")
+status_untidy <- readRDS("data/untidy2.rds")
 ```
 
 
@@ -228,7 +228,7 @@ untidy <- readRDS("data/untidy2.rds")
 Getting your data into a format that facilitates analysis is a crucial step in data analysis and forms a key part of data cleaning/preparation.  Hadley Wickham (of Posit, formerly RStudio) pioneered a way to tidy data into a consistent format called **tidy data**. 
 
 
-Data can be represented in multiple ways.  Tidy data may not always be the optimal format for visual inspection or for data entry for example, but it is ideal for analysis. All packages in the **`tidyverse`**, **`dplyr`** and **`ggplot2`** for example, are designed to work with tidy data.  
+Data can be represented in multiple ways.  Tidy data may not always be the optimal format for visual inspection, reporting or for data entry for example, but it is ideal for analysis. All packages in the **`tidyverse`**, such as **`dplyr`** and **`ggplot2`** for example, are designed to work with tidy data.  
 
 
 :::: {style="display: flex;"}
@@ -250,9 +250,23 @@ knitr::include_graphics("images/tidyverse.png")
 
 In R, the most common data structure is a vector.  Tidy data organises variables in columns of a dataframe (which are essentially vectors), aligning with the vectorised nature of R. 
 
----
+Tidy data have a rectangular format (rows and columns), and display 3 key properties:
 
-Below are examples of the same data, with 4 variables, **country**, **year**, **population**, and number of documented **cases** of TB (tuberculosis), represented in 3 different ways.  The last table is in tidy data format, and it is the easiest to use for analysis. 
+**1. Each variable has its own column**
+
+**2. Each observation has its own row**
+
+**3. Each value has its own cell**
+
+The following should also apply:
+
+- ***Values should not contain units*** (these can instead be specified in supporting documents)
+
+- ***No extraneous information*** (footnotes, table titles, references, etc.)
+
+### For example:  
+
+Below are examples of the same data, with 4 variables, **country**, **year**, **population**, and number of documented **cases** of TB (tuberculosis), represented in 3 different ways.  The last table, **Table 3**, is in tidy data format, and it is the easiest to use for analysis. 
 
 Table 1: 
 ```{r, echo = TRUE}
@@ -281,7 +295,7 @@ Table 2:
 #> # ℹ 6 more rows
 ```
 
-Table 3:
+Table 3: *Tidy data format*
 ```{r, echo = TRUE}
 #> # A tibble: 6 × 4
 #>   country      year  cases population
@@ -294,19 +308,13 @@ Table 3:
 #> 6 China        2000 213766 1280428583
 ```
 
-Tidy data have a rectangular format (rows and columns), and display 3 key properties:
+You can check with the with the tidy data criteria that **Table 3** is in tidy format, this is also shown graphically below.
 
-**1. Each variable has its own column**
+**1. Each variable has its own column  &#10004;**
 
-**2. Each observation has its own row**
+**2. Each observation has its own row  &#10004;**
 
-**3. Each value has its own cell**
-
-The following should also apply:
-
-- ***Values should not contain units*** (these can instead be specified in supporting documents)
-
-- ***No extraneous information*** (footnotes, table titles, references etc)
+**3. Each value has its own cell  &#10004;**
 
 
 ```{r, fig.cap="**Fig 1:** Graphical illustration of tidy data, taken from [R for Data Science](https://r4ds.had.co.nz/tidy-data.html?q=tidy%20data#non-tidy-data)", out.width='90%'}
@@ -333,16 +341,17 @@ This interactive quiz is to familiarise you with identifying tidy data rules in 
 
 ### Quiz
 
-#### Untidy data example 1  
+#### Example 1  
   
-  
+The table below represents some student exam results:
+
 ```{r, echo = FALSE,out.width = '100%'}
 #, fig.width=474, fig.height=111
-knitr::include_graphics("images/untidyex1.png")
+knitr::include_graphics("images/untidyex4.png")
 ```
   
-  
-Answer the following questions to decide if each of the tidy data statements are true or not for the table above:
+
+First try and identify the different variables represented in the table, then answer the following questions to decide if each of the tidy data statements are true or not for the table:
 
 #### Questions
 
@@ -352,35 +361,35 @@ quiz(caption = "",
     answer("TRUE"),
     answer("FALSE", correct = TRUE),
     allow_retry = TRUE,
-    correct = "Correct. This table has 3 variables: company, quarter, and average monthly turnover; these variables are not in their own columns.", 
+    correct = "Correct. This table has 4 variables: student ID, subject, year, and grade; these variables are not in their own columns.", 
     incorrect = "Incorrect, try again."
   ),
   question("Each observation has its own row.",
     answer("TRUE"),
     answer("FALSE", correct = TRUE),
     allow_retry = TRUE,
-    correct = "Correct. The average monthly turnover at each quarter are independent observations, and should be in their own rows.",
+    correct = "Correct. The student results for each year and subject are independent observations, and should be in their own rows.",
     incorrect = "Incorrect, try again."
   ),
   question("Each value has its own cell.",
     answer("TRUE", correct = TRUE),
     answer("FALSE"),
     allow_retry = TRUE,
-    correct = "Correct. Each cell contains a single piece of information, therefore each value has its own cell.",
+    correct = "Correct. Each grade value is contained within its own cell.",
     incorrect = "Incorrect, try again."
   ),
-  question("Values should not contain units.",
-    answer("TRUE"),
-    answer("FALSE", correct = TRUE),
+  question("Are there any units of measurement included?",
+    answer("YES", correct = TRUE),
+    answer("NO"),
     allow_retry = TRUE,
-    correct = "Correct. There are the units, €, included in the table",
+    correct = "Correct. There are the units, %, included in the table",
     incorrect = "Incorrect, try again."
   ),
-  question("No extraneous information.",
-    answer("TRUE"),
-    answer("FALSE", correct = TRUE),
+  question("Is there any extraneous information included?",
+    answer("YES", correct = TRUE),
+    answer("NO"),
     allow_retry = TRUE,
-    correct = "Correct. This table includes asterisks and a footnote, these are extraneous information.  This information should either be captured into the variable names or kept in the associated metadata.",
+    correct = "Correct. This table includes an asterisk and a footnote, this is extraneous information.  This information should either be captured in a different way (such as in the associated metadata).",
     incorrect = "Incorrect, try again."
   )
   )
@@ -390,9 +399,10 @@ quiz(caption = "",
 
 ### Quiz
 
-#### Untidy data example 2  
+#### Example 2  
   
-  
+This table shows the release status for different batches of a medicine produced in a pharmaceutical manufacturing facility:  
+
 ```{r, echo = FALSE,out.width = '100%'}
 #, fig.width=474, fig.height=111
 knitr::include_graphics("images/untidyex2.png")
@@ -408,14 +418,14 @@ quiz(caption = "",
     answer("TRUE"),
     answer("FALSE", correct = TRUE),
     allow_retry = TRUE,
-    correct = "Correct. This table has 4 variables: year, campaign, batch and approval status; these variables are not in their own columns.", 
+    correct = "Correct. This table has 4 variables: year, campaign, batch and release status; these variables are not in their own columns.", 
     incorrect = "Incorrect, try again."
   ),
   question("Each observation has its own row.",
     answer("TRUE", correct = TRUE),
     answer("FALSE"),
     allow_retry = TRUE,
-    correct = "Correct. The approval status, year, campaign, batch are each in their own rows ",
+    correct = "Correct. The release status, year, campaign, batch are each in their own rows ",
     incorrect = "Incorrect, try again."
   ),
   question("Each value has its own cell.",
@@ -425,16 +435,16 @@ quiz(caption = "",
     correct = "Correct. The values for year, campaign, and batch are not in their own cells.",
     incorrect = "Incorrect, try again."
   ),
-  question("Values should not contain units.",
-    answer("TRUE", correct = TRUE),
-    answer("FALSE"),
+  question("Are there any units of measurement included?",
+    answer("YES"),
+    answer("NO", correct = TRUE),
     allow_retry = TRUE,
     correct = "Correct. There are no units included in this table.",
     incorrect = "Incorrect, try again."
   ),
-  question("No extraneous information.",
-    answer("TRUE", correct = TRUE),
-    answer("FALSE"),
+  question("Is there any extraneous information included?",
+    answer("YES"),
+    answer("NO", correct = TRUE),
     allow_retry = TRUE,
     correct = "Correct. There is no extraneous information in this table.",
     incorrect = "Incorrect, try again."
@@ -477,6 +487,10 @@ knitr::include_graphics("images/tidyr.png")
 
 ## separate()
 
+
+###
+
+
 The first of the three functions most commonly used at the starting point for tidying data is the `separate()` function. This takes a single column that may have 2 or more variables within it and separates them into as many distinct variable columns as specified.  The function has the following structure:
 
 ```{r, eval = FALSE, echo = T}
@@ -510,7 +524,7 @@ data %>%
   
   - If numeric, `sep` is interpreted as character positions to split at instead of specifying a delimiter. Positive values start at 1 at the far-left of the string; negative value start at -1 at the far-right of the string. 
   
-- `remove` removes the original column you are separating, it defaults to TRUE so we don't usually include it, however if you want to retain the original column you can include it and set it to FALSE.  
+- `remove` removes the original column you are separating, it defaults to TRUE so we don't usually include it, however if you want to retain the original column in the dataframe you can include it and set it to FALSE.  
 
 :::: {.readingbox }
 *Regular expressions* are a tool for describing patterns in strings, you can read more about them in [Chapter 15 of R for Data Science (2e)](https://r4ds.hadley.nz/regexps).
@@ -519,12 +533,13 @@ data %>%
 :::: {.readingbox }
 There are other optional arguments that can be used to further tidy and manipulate the data within the `separate()` function, these are detailed [here](https://tidyr.tidyverse.org/reference/separate.html).
 ::::
+  
+---    
+    
+### Using separate()  
 
----
 
-### Using separate()
-
-The following illustrates a straightforward example where `separate()` can be used.  Here we have a dataframe called **results** with a list of surnames and first names in a single column **names**:
+The following illustrates a straightforward example where `separate()` can be used.  Here we have a dataframe called **results** with a list of surnames and first names in a single column called **names**:
 
 
 ```{r, echo = F}
@@ -539,22 +554,80 @@ results <- data.frame(names, sem1 = as.factor(sem1), sem2 = as.factor(sem2))
 results
 ```
 
-We can use `separate()` on the **names** variable to split it into 2 new columns called **surname** and **first_name**.  It will automatically remove the original **names** column unless the argument `remove = FALSE` is present.
+We can use `separate()` on the **names** variable to split it into 2 new columns called **surname** and **first_name**. We also specify using the `sep=` argument how we want to split the data, in this case splitting at the comma. The `separate()` function will automatically remove the original **names** column unless the argument `remove = FALSE` is present.
 
 ```{r, echo = T, eval = T}
 results %>%
 separate(names, into = c("surname", "first_name"), sep = ", ")
 ```
+
+Note this expression generates a new dataframe, but it doesn't save it.  We can either replace the original dataframe (by saving to an object called **results**) or save it to a new dataframe object, for example **results_tidy**, as shown here: 
+
+```{r, echo = T, eval = F}
+results_tidy <- results %>% 
+  separate(names, into = c("surname", "first_name"), sep = ", ")
+```
+
+
 This data isn't quite in tidy data format yet, as each observation (the different semester grades) is not in its own row.  We'll see how to remedy that in the next section.
 
+---
+
+::: {.exercise-box }
+### Exercise
+
+Here we have an example dataframe from the quiz at the start of the tidy data tutorial, we have called it **status_untidy**. Let's see how we can use the function `separate()` as a step in transforming it from *untidy* data into *tidy* data. 
+
+```{r, echo = TRUE, eval = TRUE}
+status_untidy
+```
 
 
+The first column contains three different variables of **year**, **campaign** and **batch**, and the `separate()` function can be used to separate this into 3 new columns.  The **Year-campaign-batch** column is still very useful in this context though as the company needs it as unique identifier in its data, so we need to also retain this column.
+
+Separate the first column into new columns called **year**, **campaign** and **batch**, and also retain the first column as a unique ID column:
+
+```{r untidy-S1, exercise=TRUE, exercise.lines = 7}
+#Complete this expression: 
+status_untidy %>% 
+  separate(
+    # complete expression
+  )
+
+```
+
+```{r untidy-S1-hint}
+# col to separate: "Year-campaign-batch"
+# new variables: c("year", "campaign", "batch")
+# separator: "_"
+# set the remove argument to FALSE to retain the original column     
+```
+
+
+```{r untidy-S1-solution}
+# Solution: 
+#Complete this expression: 
+status_untidy %>% 
+  separate("Year-campaign-batch", 
+           into = c("year", "campaign", "batch"), 
+           sep = "-",
+           remove = FALSE)
+      
+```
+
+We can now see that we have three new variable columns made from the first column, and that we have retained the first column as a unique ID variable. In the exercise at the end of the next section we will see how to complete the transformation of this untidy data into tidy data format.
+
+
+::::
 
 ## pivot_longer()
 
+
+###
+
 The function `pivot_longer()` is extremely useful, and is used for reshaping or pivoting data, it is used to *lengthen* data. 
 
-The following example shows 6 individual, independent, blood pressure measurements (**bp1** & **bp2**) for 3 different patients (**id**).  The table on the left is in *wide* format, and it is untidy as it does not follow the rules for tidy data. In order for this to be tidy we need to convert it to 6 rows of data, one for each observation, as shown on the right - the table has been pivoted, or lengthened, and now follows the tidy data rules. (Note that in this example the untidy or wide format on the left would be more useful for data entry, however we need it in long or tidy format for analysis).
+The following example shows 6 individual, independent, blood pressure measurements (**bp1** & **bp2**) for 3 different patients (**id**).  The table on the left is in *wide* format, and it is untidy as it does not follow the rules for tidy data. In order for this to be tidy we need to convert it to 6 rows of data, *one for each observation*, as shown on the right - the table has been pivoted, or lengthened, and now follows the tidy data rules. (Note that in this example the untidy or wide format on the left would be more useful for data entry or for reporting, however we need it in long or tidy format for analysis).
 
 
 ```{r, fig.cap="**Fig 2:** Graphical illustration of tidy data, taken from [R for Data Science](https://r4ds.hadley.nz/data-tidy.html#fig-pivot-variables).", out.width='80%'}
@@ -562,13 +635,13 @@ knitr::include_graphics(path = "images/pivot_longer1.png")
 ```
 
 
-To lengthen the data the columns that are already variables, the **id** column in this example, need to be repeated, once for each column that is pivoted. Here the columns **bp1** and **bp2** are to be pivoted. Those column names then become values in a new variable, in the example this is called **measurement**.  The contents of the pivoted columns, the values, then populate another new variable, in this example called **value**. You can use the rules of tidy data to check that the right hand table is now in tidy data format.
+To lengthen the data, the columns that are already variables, the **id** column in this example, need to be repeated, once for each column that is pivoted. Here the columns **bp1** and **bp2** are to be pivoted. Those column names then become values in a new variable, in the example this is called **measurement**.  The contents of the pivoted columns, the values, then populate another new variable, in this example called **value**. You can use the rules of tidy data to check that the right hand table is now in tidy data format.
 
 :::: {.readingbox }
 To see this example in more detail refer to [section 5.3.2 in R for Data Science](https://r4ds.hadley.nz/data-tidy.html#fig-pivot-variables).
 ::::
 
----
+###
 
 To pivot data from wide to long format the function `pivot_longer()` can be used.  It has the following structure:
 
@@ -594,7 +667,7 @@ There are other optional arguments that can be used to further tidy and manipula
 
 ### Using pivot_longer()
 
-We can illustrate how to use `pivot_longer()` on the **results** dataset we used to demonstrate the `separate()` function.  This shows a list student names and the results they received in semesters 1 & 2:
+We can illustrate how to use `pivot_longer()` on the same **results** dataset we used to demonstrate the `separate()` function.  This shows a list student names and the results they received in semesters 1 & 2:
 
 
 ```{r, echo = F, eval = T}
@@ -619,33 +692,35 @@ pivot_longer(cols = c("sem1", "sem2"), # columns to lengthen
 ```
 
 
-This results in tidy data, that satisfies the following tidy data rules:
+This results in tidy data, that satisfies the tidy data rules:
 
-**1. Each variable has its own column**
+**1. Each variable has its own column  &#10004;**
 
-**2. Each observation has its own row**
+**2. Each observation has its own row  &#10004;**
 
-**3. Each value has its own cell**
+**3. Each value has its own cell  &#10004;**
 
 ---
 
 ::: {.exercise-box }
 ### Exercise
 
-Here we have an example dataframe from the quiz at the start of the tidy data tutorial. Let's step through it to apply the functions `separate()` and `pivot_longer()` to transform it from untidy data into tidy data. 
+Here we have the example dataframe, **status_untidy**,  from the quiz at the start of the tidy data tutorial, and this is also the dataframe used in the `separate()` exercise. Let's step through it to apply the functions `pivot_longer()` and `separate()` and to transform it from untidy data into tidy data. 
 
 ```{r, echo = TRUE, eval = TRUE}
-untidy
+status_untidy
 ```
 
 
 #### Step 1
 
-Use `pivot_longer()` to lengthen this dataframe by adding the last three column names to a new column called **status**, and the values of those columns to a new column called **values**. 
+Use `pivot_longer()` to lengthen this dataframe by combining the column names **Approved**, **Reject**, **In-Quarantine** into a single column called **status**, and the values of those columns into a column called **values**:
+
+
 
 ```{r untidy-1, exercise=TRUE, exercise.lines = 7}
 #Complete this expression: 
-untidy %>% pivot_longer(
+status_untidy %>% pivot_longer(
   
   )
 
@@ -664,7 +739,7 @@ values_to = "values"
 
 ```{r untidy-1-solution}
 # Solution: 
-untidy %>% 
+status_untidy %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -673,12 +748,12 @@ untidy %>%
 ```
 #### Step 2
 
-Once we lengthen this data we see that we only need to keep the rows that have "X" in the values column.  
+Once we lengthen this data we see that we only need to keep the rows that have "X" in the values column as those that don't hold no release status information.  
 
 Use the dplyr function  `filter()` to only retain the rows with "X" as a value:
 
 ```{r, include = F}
-untidy %>% 
+status_untidy  %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -687,7 +762,7 @@ untidy %>%
 
 ```{r untidy-2, exercise=TRUE, exercise.lines = 11}
 #Complete this expression: 
-untidy %>% 
+status_untidy  %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -706,7 +781,7 @@ untidy %>%
 ```{r untidy-2-solution}
 # Solution: 
 #Complete this expression: 
-untidy %>% 
+status_untidy  %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -719,11 +794,11 @@ untidy %>%
 
 We're not done yet!
 
-We have successfully captured the status for each Year-campaign-batch however the column called **values** now shows no useful information, so we need to remove it.
+We have successfully captured the **status** for each **Year-campaign-batch** however the column called **values** now shows no useful information (all values are now "X"), so we need to remove it.
 
 
 ```{r, include = F}
-untidy %>% 
+status_untidy  %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -736,7 +811,7 @@ Use the dplyr function `select()` to remove the values column:
 
 ```{r untidy-3, exercise=TRUE, exercise.lines = 13}
 #Complete this expression: 
-untidy %>% 
+status_untidy %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -759,7 +834,7 @@ untidy %>%
 ```{r untidy-3-solution}
 # Solution: 
 #Complete this expression: 
-untidy %>% 
+status_untidy %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -771,15 +846,20 @@ untidy %>%
       
 ```
 
-This is already looking a lot neater, and is easier to interpret and to analyse.  However, the first column still contains three different variables of **year**, **campaign** and **batch**, the `separate()` function can be used to separate this into 3 new columns.  The **Year-campaign-batch** column is still very useful in this context though as the company needs it as unique identifier in its data, so we need to also retain this column. 
+This is already looking a lot neater, we have a column for the batch identifier and the status of that batch.  It is easier to interpret and to analyse.  
+
+In the `separate()` section we did an exercise to separate the **Year-campaign-batch** column into three new variables of **year**, **campaign** and **batch**.  We also retained the **Year-campaign-batch** column as the company needs it as unique identifier in its data. 
+
+We can now combine this `separate()` step with steps 1 to 3 to further tidy the data. 
 
 #### Step 4
 
-Separate the first column into new columns called **year**, **campaign** and **batch**, and retain the column as a unique ID column:
+This code includes both `pivot_wider()` and `separate()` steps. Run the code block and observe the output:
 
-```{r untidy-4, exercise=TRUE, exercise.lines = 17}
-#Complete this expression: 
-untidy %>% 
+
+```{r untidy-4, exercise=TRUE, exercise.lines = 13}
+
+status_untidy %>% 
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -787,31 +867,7 @@ untidy %>%
   values == "X"  
   ) %>% select(
     -values
-  ) %>%
-  separate(
-    # complete expression
-  )
-
-```
-
-```{r untidy-4-hint}
-separate(names, into = c("surname", "first_name"), sep = ", ")
-      
-```
-
-
-```{r untidy-4-solution}
-# Solution: 
-#Complete this expression: 
-untidy %>% 
-  pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
-  names_to = "status",
-  values_to = "values"
-  ) %>% filter(
-  values == "X"  
-  ) %>% select(
-    -values
-  ) %>%
+  ) %>% # code included from separate() exercise:
   separate("Year-campaign-batch", 
            into = c("year", "campaign", "batch"), 
            sep = "-",
@@ -821,12 +877,22 @@ untidy %>%
 
 We now have tidy data!  
 
+**1. Each variable has its own column  &#10004;**
+
+**2. Each observation has its own row  &#10004;**
+
+**3. Each value has its own cell  &#10004;**
+
 #### Step 5
 
-Finally, to complete the tidying and cleaning we could update the column types, and rename the first column, to give our final tidy data tided dataframe.  Example code to do this is shown below:
+Finally, we can add an optional step to complete the tidying and cleaning of the data.  For example we could update the column types, and rename the first column, to give a final tided dataframe.  
+
+Note is is vital to save your dataframe, here we have saved it to a new dataframe object called **status_tidy**. 
+
+The final code to tidy and clean the data (steps 1 to 5), and the resulting dataframe is shown below:
 
 ```{r, echo = T, eval = T}
-untidy %>% 
+status_tidy <- status_untidy %>% # save dataframe to a new object
   pivot_longer(cols = c("Approved", "Reject", "In-Quarantine"),
   names_to = "status",
   values_to = "values"
@@ -841,13 +907,20 @@ untidy %>%
            remove = FALSE) %>%
   mutate(year = as.factor(year), # change to factor
          campaign = as.factor(campaign),# change to factor
+         status = as.factor(status),# change to factor
          batch = as.numeric(batch) # change to numeric
          ) %>%
-  # rename first column
+  # rename first column: rename(new_name = old_name)
   # note because the column name contains punctuation we need to use " "
-  rename(UniqueID = "Year-campaign-batch")
+  rename(uniqueID = "Year-campaign-batch")
+
+# view the tidied dataframe
+status_tidy 
 ```
+
 We're done!
+
+
 
 It can seem very complex to tidy and clean data, but if it is approached it in step-wise manner typically we can tidy and clean data using relatively few  `tidyr` and `dplyr` functions.
 
@@ -855,7 +928,14 @@ It can seem very complex to tidy and clean data, but if it is approached it in s
 
 ## pivot_wider()
 
-The third useful function from `tidyr` is `pivot_wider()`.  This makes datasets wider, although used less commonly in tidying data, it is useful when one observation is spread across multiple rows.  It is also useful for when data is needed in an untidy format for other purposes, often tidy data is not ideal for presenting or reporting for example. It is the inverse operation to `pivot_longer()`.
+
+###
+
+
+
+The third useful function from `tidyr` is `pivot_wider()`.  This makes datasets wider, although used less commonly in tidying data, it is useful when one observation is spread across multiple rows.  It is also very useful for when data is needed in an 'untidy' wide format for other purposes, often tidy data is not ideal for presenting or reporting for example, or it is needed in a particular format to suit a specific modelling technique.  
+
+It is the inverse operation to `pivot_longer()`.
 
 Data can be often be presented in *key-value* form, where one column holds a list of *keys*, these would be the variables, and another column is the list of associated *values*.
 
@@ -877,7 +957,11 @@ There are other optional arguments that can be used to further tidy and manipula
 
 ### Using pivot_wider()
 
-In the following example there are minimum and maximum weight measurements, recorded from a sample of fish collected from two different rivers for two different fish species.  As these measurements are taken from the same sample, rather than from different instances, we could consider them to be a single observation representing the weight range of the sample of fish. 
+In the following example there are minimum and maximum weight measurements, recorded from a sample of fish collected from two different rivers for two different fish species. This form of data could be considered tidy, and is ideal for use with `ggplot()` for example.  
+
+There are instance where *widening* the data may provide tidy data, for example if we consider these fish measurements as a single observation representing the weight range of the sample of fish being taken from the same sample at the same time. 
+
+More commonly we want the data in a format suitable for further modelling, for example we may want the minimum and maximum weights as separate variables. *Widening* data can be very useful also when transforming tidy data into tables suitable for presentations, reporting, or for easier data entry for example. 
 
 ```{r, eval = T, echo = F}
 r1 <- c("river", "Blackwater", "Blackwater", "Moy", "Moy")
@@ -892,7 +976,7 @@ untidy3 <- untidy3 %>% pivot_longer(-c(river, measure), names_to = "species", va
 untidy3
 ```
 
-To use `pivot_wider()` the **measure** is the *key* column, it contains the variables names that could be part of the same observation, and these will be assigned as the names of two new columns (**max** and **min**).  The *values* are the different fish weights.
+To *widen* this data we can use `pivot_wider()`.  The **measure** is the *key* column, it contains the variables names, and these will be assigned as the names of two new columns (**max** and **min**).  The *values* are the different fish weights.
 
 ```{r, eval = T, echo = T}
 untidy3 %>% pivot_wider(names_from = "measure",
@@ -900,9 +984,9 @@ untidy3 %>% pivot_wider(names_from = "measure",
        
 ```
 
-This data is now in tidy format (as we are considering max and min weight within the same observation).
+This data is now in the desired format.
 
-To further tidy and clean the data we can also remove the units "kg" and convert to numeric, and change species and river to factor variables:
+To further tidy and clean the data we can also remove the units "kg", and convert the weights variable from character to numeric, and change species and river to factor variables:
 
 ```{r, eval = T, echo = T}
 untidy3 %>% pivot_wider(names_from = "measure", 
@@ -917,6 +1001,7 @@ untidy3 %>% pivot_wider(names_from = "measure",
 This table now shows clean, tidy data!
 
 
+---
 
 ## Working with dates
 
@@ -924,7 +1009,7 @@ Working with dates can get complicated and confusing.
 
 Dates themselves aren't that straightforward, consider that the number of days in a year or days in a month can vary, even hours in a day can vary when we take daylight savings into consideration. 
 
-Dates and times can be also represented in data as strings or numbers, and in many different formats. For example, the following all represent the same date: 
+Dates and times can be also represented in data in different formats such as strings or numbers, and in many different ways. For example, the following all represent the same date: 
 
 - 13Mar2024  
 - 2024:13thMarch
@@ -952,9 +1037,15 @@ knitr::include_graphics("images/lubridate.png")
 
 ::::
 
-###
+Lubridate is not part of the core tidyverse as it is only required when working with dates/ times. Therefore to use it we need to install the lubridate package and load the library.
 
-Lubridate is not part of the core tidyverse as it is only required when working with dates/ times. 
+```{r, eval = FALSE, echo = TRUE}
+install.packages(lubridate)
+
+library(lubridate)
+```
+
+### Standardised format
 
 There are three types of date/time data:
 
@@ -962,19 +1053,11 @@ There are three types of date/time data:
 - A **time** within a day. Tibbles print this as `time`.  
 - A **date-time** is a date plus a time: it uniquely identifies an instance in time (typically to the nearest second). Tibbles print this as `dttm`. Elsewhere in R these are labelled `POSIXct`.
 
-#### Standardised format
 
 To illustrate the standardised format that lubridate uses, we can access today’s date or date-time using `today()` and `now()`:
 
-```{r, eval=FALSE, echo=TRUE}
-library(lubridate)
 
-today()
-
-now()
-```
-
-```{r}
+```{r, echo = TRUE, eval = TRUE}
 today()
 
 now()
@@ -987,7 +1070,9 @@ Lubridate represents dates as **year-month-day** and date-times as **year-month-
 ::::
 
 
-## Parsing dates
+## Converting dates
+
+###
 
 
 We may come across dates stored in different formats, these could be:
@@ -996,7 +1081,7 @@ We may come across dates stored in different formats, these could be:
 - as numbers
 - containing mixed delimiters
 
-We can use `lubridate` functions to parse the date strings or numbers into the standardised date format.  The lubridate functions are constructed using letters that represent the date elements in the order that you observe them appearing as in the data.  The date elements are indicated using the following abbreviations: 
+We can use **lubridate** functions to convert the date strings or numbers into the standardised `date` format.  The lubridate functions are constructed using letters that represent the date elements in the order that you observe them appearing as in the data.  The date elements are indicated using the following abbreviations: 
 
 **d : day**  
 
@@ -1005,18 +1090,22 @@ We can use `lubridate` functions to parse the date strings or numbers into the s
 **y : year**  
 
 
-#### Dates as strings
+### Dates as strings
 
-All of the following dates represent the same date, the **13th March 2024**, we use functions made up from **d**, **m**, and **y** to specify which order the date elements are in. 
+All of the dates in the following examples are character strings that represent the same date, the **13th March 2024**.
 
-In this example the date is in *day*, *month*, *year* order, so the function `dmy()` is used: 
+To convert the strings into the standarised `date` format we can use lubridate functions made up from **d**, **m**, and **y** to specify which order the date elements appear in each string. 
+
+The date in this example is in *day*, *month*, *year* order, so the function `dmy()` is used: 
 
 ```{r, eval=TRUE, echo=TRUE}
 date1 = "13Mar2024"
 dmy(date1)
 ```
 
-The functions can handle most delimiters as well as extraneous information such as the "th" in this example.  This date is in the order *year*, *day*, *month* so `ymd()` can be used: 
+Note the output is now in the standardised `date` format.
+
+The functions can handle most delimiters as well as extraneous information such as the "th" in this next example.  This date is in the order *year*, *day*, *month* so the function `ymd()` can be used: 
 
 ```{r, eval=TRUE, echo=TRUE}
 date2 = "2024:13th:March"  
@@ -1039,7 +1128,7 @@ my(date4)
 ```
 
 :::: {.notesbox }
-**N.B.** If the data only contains month and year, with no day information, when parsed by lubridate the date will default to the first of the month.
+**N.B.** If the data only contains month and year, with no day information, when converted by lubridate the date will default to the first of the month.
 ::::
 
 ###
@@ -1047,10 +1136,10 @@ my(date4)
 :::: {.exercise-box }
 #### Exercise
 
-Parse the following three dates, they all represent the same date, the **15th October 2023**:
+Convert the following three date strings into the standardised `date` format using lubridate functions.  These date strings all represent the same date, the **15th October 2023**:
 
 ```{r, datestrings-1, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The date to be converted:
 date_a = "15/10/23" 
  
 # Use the appropriate lubridate function:
@@ -1063,7 +1152,7 @@ dmy(date_a)
 ```
 
 ```{r, datestrings-1B, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The date to be converted:
 date_b = "23.1015"  
  
 # Use the appropriate lubridate function:
@@ -1077,7 +1166,7 @@ ymd(date_b)
 ```
 
 ```{r, datestrings-1C, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The date to be converted:
 date_c = "2023 15th Oct"  
  
 # Use the appropriate lubridate function:
@@ -1094,28 +1183,33 @@ ydm(date_c)
 
 ::::
 
-#### Dates as numbers
+### Dates as numbers
 
-Dates represented by numbers can be parsed in the same way as for strings. 
+Dates represented by numbers can be converted to `date` format using lubridate in the same way as we did for strings. 
+
+In this example the date is in the order *year*, *month*, *day*, so the lubridate function `ymd()` can be used to convert it into `date` format: 
 
 ```{r, eval=TRUE, echo=TRUE}
 date5 = 20240313 
 ymd(date5)
 ```
 
+This number represents the same date in a different order:
 ```{r, eval=TRUE, echo=TRUE}
 date6 = 031324
 mdy(date6)
 ```
 
 
+###
+
 :::: {.exercise-box }
 #### Exercise
 
-Parse the following three dates, they all represent the same date, the **15th October 2023**:
+Convert the following dates, that are represented by numbers, into the standardised `date` format using lubridate functions.  These numbers all represent the same date, the **15th October 2023**:
 
 ```{r, datestrings-2A, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The numeric date to be converted:
 date_e = 231015
 
 # Use a lubridate functions:
@@ -1129,7 +1223,7 @@ ymd(date_e)
 
 
 ```{r, datestrings-2B, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The numeric date to be converted:
 date_f = 151023 
 
 # Use a lubridate functions:
@@ -1142,7 +1236,7 @@ dmy(date_f)
 ```
 
 ```{r, datestrings-2C, exercise=TRUE, exercise.lines = 6}
-# The date to be parsed:
+# The numeric date to be converted:
 date_g = 20231510  
 
 # Use a lubridate functions:
@@ -1154,9 +1248,9 @@ ydm(date_g)
 ```
 ::::
 
-#### Date-times
+### Date-times
 
-To include times with the dates we can add the abbreviations **h**, **m**, **s** to the function.  
+To include times with the dates we can add the abbreviations **h**, **m**, **s** to the function.  We can then use lubridate functions to convert dates into `date-time` format (this will be either `dttm` or `POSIXct` class). 
 
 **h : hours** 
 
@@ -1173,9 +1267,9 @@ There are some constraints with adding times; the year, month, day can be in add
 
 
 
-Similarly to dates, we can convert either strings or numbers to date-time format. 
+Similarly to dates, we can convert either character strings or numbers to `date-time` format. 
 
-For example, converting a number to date-time format using `ymd_hms()`:
+For example, converting a number to `date-time` format using `ymd_hms()`:
 
 ```{r, eval=TRUE, echo=TRUE}
 datetime1 = 20240313105604 
@@ -1200,12 +1294,16 @@ mdy_h(datetime3)
 ::::
 
 :::: {.exercise-box }
+
+###
+
+
 #### Exercise
 
-Parse the following three dates, they all represent the same date-times (if the minute and second data is available), the **05th April 2021 @ 21hours 40mins 27sec**
+Using lubridate functions convert the following three date-times into the standardised `date-time` format.  They all represent the same date-times (if the minute and second data is available), the **05th April 2021 @ 21hours 40mins 27sec**
 
 ```{r, datestrings-3A, exercise=TRUE, exercise.lines = 6}
-# This is the date to be parsed:
+# This is the date to be converted:
 datetime_a = "05/04/21 21:40:27"
  
 # Use a lubridate function:
@@ -1217,7 +1315,7 @@ dmy_hms(datetime_a)
 ```
 
 ```{r, datestrings-3B, exercise=TRUE, exercise.lines = 6}
-# This is the date to be parsed:
+# This is the date to be converted:
 datetime_b = 20210405214027 
 
 # Use a lubridate function:
@@ -1230,7 +1328,7 @@ ymd_hms(datetime_b)
 ```
 
 ```{r, datestrings-3C, exercise=TRUE, exercise.lines = 6}
-# This is the date to be parsed:
+# This is the date to be converted:
 datetime_c = "April 5th 2021 at 9pm"
 
 # Use a lubridate function:
@@ -1241,17 +1339,23 @@ mdy_h(datetime_c)
 ```
 ::::
 
-#### Timezones 
+### Timezones 
 
-Date-times are automatically stored with the UTC time zone.
+In lubridate, date-times are automatically stored with the UTC timezone.
 
 
-We can use the argument `tz =` within the lubridate functions to specify the time zones.  It can take both country names and letter abbreviations, and lubridate will always use an abbreviation to store the dates.
+We can use the argument `tz =` within the lubridate functions to specify whatever timezone we choose.  It can take both country names and letter abbreviations, and lubridate will always use an abbreviation to store the dates.
+
+For example we can specify a specific timezone using an abbreviation:
 
 ```{r, eval=TRUE, echo=TRUE}
-    mdy_hms("June 5th 2021 15:14:30", tz = "GMT")
-    
-    dmy(05062021, tz = "US/Eastern")
+mdy_hms("June 5th 2021 15:14:30", tz = "GMT")
+```
+
+Or we can specify a specific timezone using a country string, lubridate will store this in its abbreviated form:
+
+```{r, eval=TRUE, echo=TRUE}
+dmy(05062021, tz = "US/Eastern")
 
 ```
 
@@ -1261,7 +1365,7 @@ The function `Sys.timezone()` will access the current timezone:
 Sys.timezone()
 ```
 
-The function `OlsonNames()` can be used to look up the list of country names and abbreviations that lubridate accepts.
+The function `OlsonNames()` can be used to look up the list of ~ 600 country names and abbreviations that lubridate accepts.
 
 ```{r, eval=TRUE, echo=TRUE}
 # head() can be used to list the first x number of names
@@ -1269,10 +1373,10 @@ head(OlsonNames(), 10)
 ```
 
 
-We will look at how to change the time zone of a date-time in the next section. 
+We will look at how to change the time zone of a `date-time` in the next section. 
 
 :::: {.extrabox }
-Although dates can be accessed in any order, times can only be used in the order of hms.  The package  [`hms`](https://hms.tidyverse.org/reference/hms-package.html) is an alternative package within the tidyverse for dealing with only times. 
+Although dates can be accessed in any order, times can only be used in the order of *h-m-s*.  The package  [`hms`](https://hms.tidyverse.org/reference/hms-package.html) is an alternative package within the tidyverse for dealing with only times. 
 
 ```{r, echo = FALSE, fig.width=3, fig.height=3, out.width = '125px'}
 knitr::include_graphics("images/hms.png")
@@ -1284,31 +1388,43 @@ knitr::include_graphics("images/hms.png")
 
 ## Get and set functions
 
-Once the date or date-times are parsed into either date or date-time format we can then use a range of **get** and **set** functions to access and change different elements of the dates and times. 
+###
 
-### Get 
 
-**Get** functions retrieve specified elements from the dates and date-times. 
+Once the date or date-times are converted into either `date` or `date-time` format we can then use a range of **get** and **set** functions to access and change different elements of the dates and times. 
 
-For example to get the day of the month we can use the function `day()`:
+Examples of **get** and **set** include the following self-explanatory functions; these can be used to **get** or retrieve elements of dates and date-times, or to **set** or change elements. 
 
-```{r, echo = TRUE, EVAL = TRUE}
-# first parse the date-time
-mydate <- mdy_hms("June 5th 2021 15:14:30", tz = "GMT")
-
-# next get the day from this date-time
-day(mydate)
-```
-The following functions are self explanatory in what date-time element they retrieve: 
-
-- `day()`  
+- `day()` 
+- `week()`
 - `month()`  
 - `year()`  
 - `hour()`  
 - `minute()`  
 - `second()`
 
-Within some functions we can also specify, where applicable, if we want the element as a string (using the argument `label = TRUE`) and if we want it abbreviated (`abbr = TRUE`).
+A full list of potential lubridate **get/set** functions can be found [**here**](https://lubridate.tidyverse.org/reference/index.html).
+
+
+### Get 
+
+
+**Get** functions retrieve specified elements from dates and date-times so long as they're in the standardised lubridate `date` and `date-time` formats. 
+
+We will use a formatted `date-time` called **mydate** here to demonstrate some of the **get** functions. 
+
+For example, to get the day of the month from a `date-time` we can use the function `day()`:
+
+```{r, echo = TRUE, EVAL = TRUE}
+# first convert the date-time
+mydate <- mdy_hms("June 5th 2021 15:14:30", tz = "GMT")
+
+# next get the day from this date-time
+day(mydate)
+```
+
+
+Within some functions we can also specify, where applicable, if we want the element outputted as a string (using the argument `label = TRUE`) and if we want it abbreviated (`abbr = TRUE`).
 
 ```{r, echo = TRUE, EVAL = TRUE}
 
@@ -1321,7 +1437,10 @@ Notice that when we return elements as a string, they are given as an ordered fa
 class(month(mydate, label = TRUE, abbr = TRUE))
 ```
 
-In addition to the straightforward functions listed above, we can also use a range of functions to get different information such as:
+
+###
+
+In addition to the straightforward functions listed above, we can also use a range of functions to **get** different information from dates and date-times such as:
 
 - `wday()` `yday()` the day of the week or the year  
 - `isoweek()` the week of the year  
@@ -1330,7 +1449,7 @@ In addition to the straightforward functions listed above, we can also use a ran
 - `am()` `pm()` is a time am or pm 
 - `leap_year()` is a year a leap year or not  
 
-
+For example, to **get** the day of the week as an abbreviated string we can use `wday()`. 
 ```{r, echo = TRUE, EVAL = TRUE}
 # get the abbreviated week day
 wday(mydate, label = TRUE, abbr = TRUE)
@@ -1349,13 +1468,13 @@ Is this date a leap year?
 leap_year(mydate)
 ```
 
+###
+
 
 :::: {.exercise-box }
 #### Exercise
 
 Use **get** functions to extract the specified elements of this date: **2024-01-29 19:31:15 UTC**
-
-A list of potential lubridate **get/set** functions can be found [here](https://lubridate.tidyverse.org/reference/index.html).
 
 ```{r datestrings-4A, exercise=TRUE, exercise.lines = 6}
 # This is the date we will use the get functions on:
@@ -1367,7 +1486,7 @@ date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 ```
 ```{r datestrings-4A-hint}
  
-# The functions month() is needed here.
+# The function month() is needed here.
 
 ```
 
@@ -1405,7 +1524,7 @@ date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 # This is the date we will use the get functions on:
 date_ex <- ymd_hms("2024-01-29 19:31:15 UTC") 
   
-# Get the month of the year as a string and NOT abbreviated
+# Get the month of the year as a string and NOT abbreviated:
 month(date_ex, label = TRUE, abbr = FALSE)
 
 ```
@@ -1431,7 +1550,7 @@ date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 # This is the date we will use the get functions on:
 date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 
-# Get what week of the year the date is in
+# Get what week of the year the date is in:
 week(date_ex)
 
 ```
@@ -1469,13 +1588,17 @@ am(date_ex)
 
 ### Set 
 
-The same functions can be used to change, to **set**,  different date and time elements.  
+The same functions as for **get** can be used to **set**, to change,  different date and time elements. 
 
-For example we could change the year of a date by assigning a new year value using `year()`: 
+The full list of potential lubridate **get/set** functions can again be found [**here**](https://lubridate.tidyverse.org/reference/index.html).
+
+Again we will generate a `date-time` called **mydate** to demonstrate the functions.
+
+For example we could change the year of a date by assigning a new year value to the `date-time` object **mydate** using `year()`: 
 
 ```{r, echo = TRUE, EVAL = TRUE}
-# first parse the date-time
-mydate <- mdy_hms("June 5th 2021 15:14:30", tz = "GMT")
+# first format the date-time
+mydate <- mdy_hms("June 5th 2021 16:14:30", tz = "GMT")
 
 # Set year to 1999
 year(mydate) <- 1999
@@ -1483,6 +1606,9 @@ year(mydate) <- 1999
 # Display new date
 mydate
 ```
+
+Notice the year in **mydate** has changed from 2021 to 1999.
+
 The timezone can be changed using `tz()`:
 
 ```{r, echo = TRUE, EVAL = TRUE}
@@ -1492,7 +1618,7 @@ tz(mydate) <- "EST"
 # Display new date-time
 mydate
 ```
-This simply changes the timezone in the date-time but doesn't *convert* the original date-time to the new timezone.  To do this, the function `with_tz()` can be used:
+`tz()` simply changes the timezone in the `date-time` (here from GMT to EST) but doesn't *convert* the original date-time to the new timezone.  To do this, the function `with_tz()` can be used:
 ```{r, echo = TRUE, EVAL = TRUE}
 # Convert the date-time into a new timezone 
 newtz <- with_tz(mydate, tzone = "Asia/Kolkata")
@@ -1501,14 +1627,17 @@ newtz <- with_tz(mydate, tzone = "Asia/Kolkata")
 newtz
 ```
 
+We can see here that the time and date of the **mydate** `date-time` have been changed to reflect the new timezone. 
+
+###
 
 
 :::: {.exercise-box }
 #### Exercise
 
-Use the following functions to **set** the specified elements of this date **2024-01-29 19:31:15 UTC**
+Use lubridate functions to **set** the specified elements of this date-time **2024-01-29 19:31:15 UTC**:
 
-A list of potential lubridate **get/set** functions can be found [**here**](https://lubridate.tidyverse.org/reference/index.html).
+
 
 ```{r datestrings-5A, exercise=TRUE, exercise.lines = 7}
 # This is the date we will use the set functions on:
@@ -1519,7 +1648,7 @@ date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 ```
 
 ```{r datestrings-5A-hint}
-# The functions day() is needed here.
+# The function day() is needed here.
 # Don't forget to call the date to see the answer.
 
 ```
@@ -1548,7 +1677,7 @@ date_ex <- ymd_hms("2024-01-29 19:31:15 UTC")
 ```
 
 ```{r datestrings-5B-hint}
-# The functions year() is needed here.
+# The function year() is needed here.
 # Don't forget to call the date to see the answer.
 
 ```
@@ -1603,37 +1732,58 @@ with_tz(date_ex, tzone = "CET")
 
 ### Invoicing data set
 
-This sample data set, **invoicing**, can be used to apply the methods learnt.  In order to work with these dates we can first turn them into Date format using lubridate.
+This sample data set, **invoicing**, can be used to apply the methods learnt.  The dates in this dataframe are in character (string) format.  In order for R to recognise and work them as dates they need to be converted into a format that R understands.  We will use lubridate to convert them to `date` format (this may be either `dttm` or `POSIXct` classes - these are equivalent). 
 
 ```{r, eval = T, echo = T}
 invoicing
 ```
 
-##### Changing a single column to date format
+###
 
-The code below shows how to convert a single column to Date format. Here we will replace the column **Invoice** with the column in date format. 
+
+#### Changing a single column to date format
+
+The code block below shows how to convert a single column to `date` format. Here we will use lubridate to convert the column **Invoice**, which is a character `chr` class, into a new column called **Invoice_date** which is in `date` class. 
 
 ```{r, eval = T, echo = T}
 invoicing$Invoice_date <- dmy(invoicing$Invoice)
 invoicing
 ```
 
-##### Changing multiple columns to date format*
 
-Using dplyr verbs we could convert all the columns we select to Date format. This code block specifies that columns 2 to 4 are to be converted to Date format using the lubridate function **dmy()**: 
+###
+
+
+#### Changing multiple columns to date format
+
+Using `dplyr` verbs we could convert all the columns we want to select to `date` format. The code block below specifies that columns 2 to 4 are to be converted to `date` format using the lubridate function `dmy()`: 
 
 ```{r, eval = T, echo = T}
+
 invoicing %>% mutate(across(2:4, ~dmy(.)))
+
 ```
 
+Notice that all date columns are now in `date` format.
+
+Remember, if we want to keep the changes we've made to a dataframe we need to either save it to a new dataframe or replace the existing dataframe. For example, here we save the new dataframe to a new dataframe object called **invoicing_2**. 
+
+```{r, eval = T, echo = T}
+
+invoicing_2 <- invoicing %>% mutate(across(2:4, ~dmy(.)))
+
+```
 ---
 
 
 ## Arithmetic with date and date-times
 
-The `difftime()` function is part of base R and is useful for calculating periods between date/date-times.
+###
 
-These are the order and delivery dates for an online order converted to Date format: 
+
+The `difftime()` function is part of base R and is useful for calculating periods between date/date-times when they are in `date` or `date-time` class.
+
+These are the order and delivery dates for an online order converted to `date` class using lubridate: 
 ```{r, eval = T, echo = T}
 Order_Date <- ymd("2022-08-01") 
 Delivery_Date <- ymd("2022-08-10") 
@@ -1651,7 +1801,7 @@ difftime(Delivery_Date, Order_Date, unit = "weeks")
 
 This function works in the same way for date-times.  With `difftime()` you can use the following units: "secs", "mins", "hours", "days", "weeks".
 
-We can also just use simple addition or subtraction on the dates and datetimes, this can be especially useful when working with dataframes/ tibbles.
+We can also just use simple addition or subtraction on the dates and date-times, this can be especially useful when working with dataframes/ tibbles.
 
 ```{r, eval = T, echo = T}
 Delivery_Date - Order_Date
@@ -1659,10 +1809,10 @@ Delivery_Date - Order_Date
 
 To add or subtract units of date and time we can use lubridate functions.  The list of possible functions can be found [**here**](https://lubridate.tidyverse.org/reference/index.html#periods).
 
-##### Example  
+### Example  
 
 
-We will use this **event_date** to show some examples of this:
+We will use this example `date-time`, and call it **event_date**, to demonstrate some examples of adding or subtracting date/time elements:
 ```{r, eval = T, echo = T}
 event_date <- ymd_hms("2022-08-01 10:43:12")
 ```
@@ -1700,17 +1850,22 @@ invoicing <- invoicing %>% mutate(across(2:4, ~dmy(.)))
 ```
 
 
-We can apply these arithmetic functions to our sample data set **invoicing**.  We can calculate the time periods between invoice and due date for example, and save it to a new variables called **invoice_duration**:
+We can apply these arithmetic functions to our sample data set **invoicing**.  We can calculate the time periods between **Invoice** and **Due** dates for example.  Using the dplyr function `mutate` we can save the result to a new variable called **invoice_duration**:
 
 ```{r, eval = T, echo = T}
 invoicing %>% mutate(
                 invoice_duration = Due - Invoice)
 ```
 
-:::: {.exercise-box }
-#### Exercise
+Observe we now have a new column called **invoice_duration**, and this is returned as a new class called `drtn`, this stands for *duration*. 
 
-Use the sample data set **invoicing_ex** to calculate the time duration between the **Due** date and **Payment** dates. Call this new variable **delay**.
+:::: {.exercise-box }
+
+### Exercise
+
+#### Part 1
+
+Use the sample data set **invoicing_ex** to calculate the time duration between the **Due** date and **Payment** dates. Save this new variable to a column called **delay**. (Note the date columns are already in `date` format).
 
 ```{r, eval = T, echo = T}
 invoicing_ex
@@ -1737,8 +1892,9 @@ invoicing_ex %>% mutate(
                 delay = Due - Payment)
 ```
 
+#### Part 2
 
-Say for example an error was found in the **invoicing_ex** dataset, and it turns out the time between invoice and due date was actually 28 days not 30.  To correct this subtract 2 days from the date in the Due column, and save it to a new column called **Due_updated**.
+Say for example an error was found in the **invoicing_ex** dataset, and it turns out the time between invoice and due date was actually 28 days not 30.  To correct this subtract 2 days from the date in the **Due** column, and save it to a new column called **Due_updated**.
 
 ```{r datestrings-7, exercise=TRUE, exercise.lines = 5}
 # Complete this expression
@@ -1759,20 +1915,25 @@ invoicing_ex %>% mutate(
                 Due_updated = Due - days(2))
 ```
 
+Again remember, if we want to keep the changes we've made to a dataframe we need to either save it to a new dataframe or replace the existing dataframe. 
+
 ::::
 ---
 
 
 ## Tidy date data
 
+###
+
+
 It can be useful to extract and store date elements into separate **year**, **month** and **day** columns (typically the time data would be kept as a single element). 
 
-This can be in addition to retaining the date or date-time in a single column so that other lubridate functions such as the ones explored above can be used.  
+This can be in addition to retaining the `date` or `date-time` variable in a single column so that lubridate functions such as the ones explored above can be used.  
 
 The separate date elements allows for flexibility when further analysing the data.  We can more easily analyse per month, or colour a plot of the data per year for example. 
 
 
-To make tidy date data we generate new columns using the **get** functions `year()`, `month()`, `day()`.  
+To make tidy date data we generate new columns using the lubridate **get** functions `year()`, `month()`, `day()`.  
 
 ```{r, include = F}
 
@@ -1786,7 +1947,7 @@ If we take some invoice dates for example:
 invoice_dates
 
 ```
-The **invoice** column can be formatted into tidy date format by creating new **year**, **month** and **day** columns  with `mutate()` and populating them using **get** functions:
+The **invoice** column can be formatted into tidy date format by creating new **year**, **month** and **day** columns  with the dplyr function `mutate()` and populating them using **get** functions:
 
 ```{r, eval = T, echo = T}
 invoice_dates %>%
@@ -1804,15 +1965,19 @@ tidy_dates <- invoice_dates %>%
 
 ```
 
-Sometimes date data is stored only in tidy format such as the table below.  To convert this back to date or date-time format the lubridate functions `make_date()` or`make_datatime()` can be used.
+Observe the columns.  We can then save this dataframe to a new dataframe, or replace the existing dataframe.
 
-This is data in tidy format: 
+### Tidy data to date/date-time format
+
+Sometimes date data is stored only in tidy format such as the table below. Note here, for example, they are stored as numbers.  To convert this back to `date` or `date-time` format we can use the lubridate functions `make_date()` or `make_datetime()`.
+
+This **tidy_dates** dataframe is in tidy format: 
 
 ```{r, eval = T, echo = T}
 tidy_dates 
 ```
 
-As there is no time element, we can use `make_date()` to construct a new column called **Date** in date format from the **year**, **month** and **day** columns:
+As there is no time element, we can use `make_date()` to construct a new column using `mutate` called **Date** in `date` format from the **year**, **month** and **day** columns:
 
 ```{r, eval = T, echo = T}
 
@@ -1821,11 +1986,12 @@ tidy_dates %>%
 
 ```
 
+Observe that there is now a new column called **Date**, in `date` format. 
 
 :::: {.exercise-box }
-#### Exercise
+### Exercise
 
-Using the sample data set below, **tidy_datetimes**, and create a new column called **datetime** that contains both date and time elements in date-time format.  
+Using the sample dataframe below, called **tidy_datetimes**, create a new column called **datetime** that contains *both* date and time elements in `date-time` format.  
 
 
 ```{r, eval = T, echo = T}
@@ -1854,7 +2020,10 @@ tidy_datetimes %>%
 
 ---
 
-## Dates origins 
+## Date origins 
+
+###
+
 
 R stores dates using UNIX time, a widely used convention.  For this, dates and date-times are stored as integers from an origin date-time.  Dates are stored as the number of days from the origin date and date-times are stored as the number of seconds from the origin date-time.
 
@@ -1880,28 +2049,31 @@ unclass(now())
 ```
 This is the number of seconds since "1970-01-01 UTC 00:00:00".
 
-We can use unclass on any date or date-time object, for example: 
+We can use unclass on any `date` or `date-time` object, for example: 
 
 ```{r, eval = T, echo = T}
 unclass(ymd("1945-09-02"))
 ```
 Here we can see that if the date is before the origin date the number is simply saved as a negative value. 
 
+###
+
+
 Some software and operating systems use a different origin date.  This can be common with spreadsheet software for example, which typically use "1900-01-01" as the origin.  However due to some historical quirks, this is not actually the date Microsoft Excel uses! Excel typically saves dates using the origin: **"1899-12-30"**.
 
-We can use the `as_date()` or `as_datetime()` function with an `origin = ` argument to convert these numbers to dates and date-times.
+We can use the `as_date()` or `as_datetime()` function with an `origin = ` argument to convert these numbers to `date` or `date-time` classes.
 
-An example to convert an Excel date:
+An example to convert an Excel date integer:
 
 ```{r, eval = T, echo = T}
 as_date(45046, origin = "1899-12-30")
 ```
-Or to convert Unix date for example:
+Or to convert Unix date integer for example:
 
 ```{r, eval = T, echo = T}
 as_date(19477, origin = "1970-01-01")
 ```
-Or to convert a UNIX date-time:
+Or to convert a UNIX date-time integer:
 
 ```{r, eval = T, echo = T}
 as_datetime(1682858096, origin = "1970-01-01")
@@ -1909,7 +2081,7 @@ as_datetime(1682858096, origin = "1970-01-01")
 
 
 ::: {.exercise-box }
-#### Exercise
+### Exercise
 
 Although UNIX time is very common, sometimes the origin dates are really unexpected, SPSS for example stores dates using the origin **October 14, 1582**.
 
@@ -1943,11 +2115,11 @@ as_date(148680, origin = "1582-10-14")
 
 
 :::: {.readingbox }
-The best place to read more about working with dates is Chapters 17 in [R for Data Science (2e)](https://r4ds.hadley.nz/).  In addition to the lubridate webpage the [lubridate cheat sheet](https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf) is a handy resource.
+A great place to read more about working with dates is Chapter 17 in [R for Data Science (2e)](https://r4ds.hadley.nz/).  In addition to the [lubridate](https://lubridate.tidyverse.org/index.html) webpage the [lubridate cheat sheet](https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf) is a handy resource.
 ::::
 
 :::: {.readingbox }
-The best place to read more about working with tidy data is 5 respectively in [R for Data Science (2e)](https://r4ds.hadley.nz/).
+The best place to read more about working with tidy data is Chapter 5 in [R for Data Science (2e)](https://r4ds.hadley.nz/data-tidy).
 ::::
 
 :::: {.readingbox }

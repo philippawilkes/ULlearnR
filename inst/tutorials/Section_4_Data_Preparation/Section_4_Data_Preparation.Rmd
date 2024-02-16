@@ -1003,6 +1003,8 @@ This table now shows clean, tidy data!
 
 ---
 
+## Lubridate Part 1
+
 ## Working with dates
 
 Working with dates can get complicated and confusing.
@@ -1385,6 +1387,8 @@ knitr::include_graphics("images/hms.png")
 
 
 ---
+
+## Lubridate Part 2
 
 ## Get and set functions
 
